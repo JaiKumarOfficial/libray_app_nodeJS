@@ -1,0 +1,25 @@
+extends layout 
+
+block content 
+
+	div 
+		h4 Author List 
+
+		ul 
+			each author in data
+				li
+					if author.dateOfBirth === undefined && author.dateOfDeath === undefined 
+						a(href=author.url) #{author.name} 
+						| ( - )
+					else if author.dateOfDeath === undefined
+						a(href=author.url) #{author.name} 
+						| (#{author.format_dob} - )
+					else if author.dateOfBirth === undefined 
+						a(href=author.url) #{author.name}  
+						| ( - #{author.format_dod})
+					else 
+						a(href=author.url) #{author.name} 
+						| (#{author.format_dob} - #{author.format_dod})
+					hr
+			else
+				li No author found

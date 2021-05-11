@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const handle_data = require('../controllers/handle_data')
 
 const Schema = mongoose.Schema;
 
@@ -11,11 +12,20 @@ const BookInstanceSchema = new Schema(
   }
 );
 
+
+
 // Virtual for bookinstance's URL
 BookInstanceSchema
 .virtual('url')
 .get(function () {
   return '/catalog/bookinstance/' + this._id;
+});
+
+BookInstanceSchema
+.virtual('format_date')
+.get(function () {
+  let new_date = handle_data.formatDate(this.due_back)
+  return new_date;
 });
 
 //Export model

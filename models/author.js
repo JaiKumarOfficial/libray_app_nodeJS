@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const handle_data = require('../controllers/handle_data')
 
 const Schema = mongoose.Schema
 
@@ -15,7 +16,15 @@ authorSchema.virtual('name').get(function() {
 })
 
 authorSchema.virtual('url').get(function() {
-    return '/catagory/author/' + this._id
+    return '/catalog/author/' + this._id
+})
+
+authorSchema.virtual('format_dob').get(function() {
+    return handle_data.formatDate(this.dateOfBirth)
+})
+
+authorSchema.virtual('format_dod').get(function() {
+    return handle_data.formatDate(this.dateOfDeath)
 })
 
 module.exports = mongoose.model('Author', authorSchema)

@@ -1,9 +1,16 @@
+const { nextTick } = require('async')
 const BookInstance = require('../models/bookinstance')
 
 
+
+
 // GET all Books Instances
-const bookInstanceList = (req, res) => {
-    res.send('BookInstanceList')
+const bookInstanceList = (req, res, next) => {
+    
+    BookInstance.find({}).populate('book').exec((err, data) => {
+        if (err) return next(err);
+        res.render('bookinstance_list', {data: data})
+    })
 }
 
 // GET specific book instance detail

@@ -1,0 +1,28 @@
+extends layout
+
+block content 
+
+	div
+		h4 List of Book Instances 
+
+		ul 
+			each instance in data
+				li
+					if instance.status == 'Available'
+						a(href=instance.url) #{instance.book.title} :
+						|	#{instance.imprint} - 
+						span.text-success #{instance.status}
+					else if instance.status == 'Loaned'
+						a(href=instance.url) #{instance.book.title} :
+						|	#{instance.imprint} - 
+						span.text-warning #{instance.status} 
+						| #{instance.format_date}
+					else
+						a(href=instance.url) #{instance.book.title} :
+						|	#{instance.imprint} - 
+						span.text-danger #{instance.status} 
+						| #{instance.format_date}
+					hr
+
+			else 
+				li There no book instances right now

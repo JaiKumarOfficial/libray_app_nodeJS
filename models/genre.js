@@ -8,7 +8,7 @@ const genreSchema = new Schema({
 
 // virtual properties - name and url
 genreSchema.virtual('url').get(function() {
-    return '/catagory/genre/' + this._id
+    return '/catalog/genre/' + this._id
 })
 
 module.exports = mongoose.model('Genre', genreSchema)
