@@ -1,0 +1,11 @@
+extends layout
+
+block content 
+  div
+    h4 List of books
+
+    ul
+      each book in data
+        li
+          a(href='/catalog/book/' + book._id) #{book.title}
+          |  (#{book.author.name})
