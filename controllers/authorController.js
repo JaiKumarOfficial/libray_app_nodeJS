@@ -2,7 +2,7 @@ const Author = require('../models/author')
 
 // GET all authors
 const authorList = (req, res, next) => {
-    Author.find({}).exec((err, data) => {
+    Author.find({}).sort([['firstName', 'ascending']]).exec((err, data) => {
         if (err) return next(err)
         res.render('author_list', {data: data})
     })

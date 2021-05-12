@@ -1,0 +1,14 @@
+extends layout 
+
+block content 
+	div 
+		h4 Genre List
+
+		ul 
+			each genre in data
+				li
+					a(href=genre.url) #{genre.name}
+				hr
+
+			else 
+				li No genre found

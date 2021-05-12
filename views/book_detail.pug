@@ -1,0 +1,27 @@
+extends layout 
+
+block content 
+    div(style='margin-left:20px;margin-top:20px')
+        h2 Book - #{book.title}
+        p #[strong Author:] 
+            a(href=book.author.url) #{book.author.name} 
+        p #[strong Summary:] #{book.summary} 
+        p #[strong ISBN:] #{book.isbn} 
+        p #[strong Genre:] 
+            a(href= book.genre[0].url) #{book.genre[0].name}
+        br
+        div(style='margin-left:30px')
+            h3 Copies
+            br
+            each instance in instances
+                if instance.status == 'Available'
+                    p #[span.text-success #{instance.status}]
+                if instance.status == 'Maintenance'
+                    p #[span.text-danger #{instance.status}]
+                if instance.status == 'Loaned'
+                    p #[span.text-warning #{instance.status}]
+                p #[strong Imprint:] #{instance.imprint}
+                p #[strong Id:] #[a(href=instance.url) #{instance._id}]
+                if instance.status != 'Available'
+                    p #[strong Due Back:] #{instance.format_date}
+                hr
