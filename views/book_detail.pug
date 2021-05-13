@@ -8,7 +8,10 @@ block content
         p #[strong Summary:] #{book.summary} 
         p #[strong ISBN:] #{book.isbn} 
         p #[strong Genre:] 
-            a(href= book.genre[0].url) #{book.genre[0].name}
+            each genre in book.genre
+                a(href= genre.url) #{genre.name}, 
+            else 
+                span.text-warning Unavailable 
         br
         div(style='margin-left:30px')
             h3 Copies
@@ -25,3 +28,5 @@ block content
                 if instance.status != 'Available'
                     p #[strong Due Back:] #{instance.format_date}
                 hr
+            else 
+                p.text-danger No copies found

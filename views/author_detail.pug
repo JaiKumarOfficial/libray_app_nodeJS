@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+
+    div(style='margin-left:10px;margin-top:20px')
+        h2 Author: #{author.name}
+        span (#{author.format_dob} - #{author.format_dod})
+        br
+        br
+        div(style='margin-left:20px')
+            h4 Books
+            each book in books 
+                p #[a(href= book.url) #{book.title}]
+                p #{book.summary}
+                hr
+            else 
+                p Author has no books. 

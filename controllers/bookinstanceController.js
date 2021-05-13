@@ -1,4 +1,4 @@
-const { nextTick } = require('async')
+const async = require('async')
 const BookInstance = require('../models/bookinstance')
 
 
@@ -14,8 +14,20 @@ const bookInstanceList = (req, res, next) => {
 }
 
 // GET specific book instance detail
-const bookInstanceDetail = (req, res) => {
-    res.send('BookInstanceDetail')
+const bookInstanceDetail = (req, res, next) => {
+    const id = req.params.id
+
+    async.parallel({
+        instance: function(callback) {
+            BookInstance.findById(id).populate('book').exec(callback)
+        },
+    }, (err, result) => {
+        if (err) return next(err);
+        // if (result.instance == null) {
+        //     return res.render('bookinstance_detail', {instance: null})
+        // }
+        res.render('bookinstance_detail', { instance: result.instance, book: result.instance.book })
+    })
 }
 
 // GET create book instance form

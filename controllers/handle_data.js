@@ -5,7 +5,7 @@ function formatDate(dateobj) {
     let month = dateobj.getMonth()
     let date = dateobj.getDate()
     let year = dateobj.getFullYear()
-    return `${months[month+1]} ${date}th, ${year}`
+    return `${months[month]} ${date}th, ${year}`
 }
 
 module.exports = {

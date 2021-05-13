@@ -1,0 +1,19 @@
+extends layout 
+
+block content  
+
+    div(style="margin-top:20px;margin-left:20px")
+        if instance == null 
+            h4.text-danger This instance does not exist anymore
+        else 
+            h2 Book Copy ID: #{instance._id} 
+            p #[strong Title: ] #{book.title} 
+            p #[strong Imprint: ] #{instance.imprint} 
+            if instance.status == 'Available'
+                p #[strong Status: ] #[span.text-success #{instance.status}] 
+            if instance.status == 'Loaned'
+                p #[strong Status: ] #[span.text-warning #{instance.status}] 
+            if instance.status == 'Maintenance'
+                p #[strong Status: ] #[span.text-danger #{instance.status}] 
+            p #[strong Due Back: ] #{instance.format_date} 
+    

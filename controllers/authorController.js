@@ -1,4 +1,6 @@
 const Author = require('../models/author')
+const Book = require('../models/book')
+const async = require('async')
 
 // GET all authors
 const authorList = (req, res, next) => {
@@ -9,9 +11,27 @@ const authorList = (req, res, next) => {
 }
 
 // GET specific author
-const author = (req, res) => {
-    //const {name} = req.params
-    res.send('author')
+const author = (req, res, next) => {
+    const id = req.params.id
+
+    async.parallel({
+        author: function(callback) {
+            Author.findById(id).exec(callback)
+        },
+        books: function(callback) {
+            Book.find({author: id}).exec(callback)
+        },
+    },
+        (err, result) => {
+            if (err) return next(err);
+            if (result.author == null) {
+                let error = new Error('No author found')
+                error.status = 404
+                return next(error)
+            }
+            res.render('author_detail', {author: result.author, books: result.books})
+        }
+    )
 }
 
 //display author create form
