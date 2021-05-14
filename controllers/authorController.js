@@ -1,6 +1,7 @@
 const Author = require('../models/author')
 const Book = require('../models/book')
 const async = require('async')
+const {body, ValidationResult, validationResult} = require('express-validator')
 
 // GET all authors
 const authorList = (req, res, next) => {
@@ -35,14 +36,55 @@ const author = (req, res, next) => {
 }
 
 //display author create form
-const createAuthor = (req, res) => {
-    res.send('author form')
+const createAuthor = (req, res, next) => {
+    res.render('author_form', {title: 'Author Form'})
 }
 
 //handle author create POST
-const handleCreateAuthor = (req, res) => {
-    res.send('author form post')
-}
+const handleCreateAuthor = [
+    body('firstName', 'First Name is required').trim().isLength({min: 1, max: 50}).escape(),
+    body('lastName', 'Last Name is required').trim().isLength({min: 1, max: 50}).escape(),
+    body('dateOfBirth').optional({checkFalsy: true}).trim().custom(date => {
+        if(isNaN(Date.parse(date))) {
+            throw new Error('Invalid Date of Birth')
+        }
+        return true;
+    }), 
+    body('dateOfDeath').optional({checkFalsy: true}).trim().custom(date => {
+        if(isNaN(Date.parse(date))) {
+            throw new Error('Invalid Date of Death')
+        }
+        return true;
+    }), 
+    
+    (req, res, next) => {
+        const errors = validationResult(req)
+        if(!errors.isEmpty()) {
+            return res.render('author_form', {title: 'Create Author', errors: errors.array()})
+        }
+        let {firstName, lastName, dateOfBirth, dateOfDeath} = req.body
+        Author.findOne({firstName: {$regex: firstName, $options: 'i'}, lastName: {$regex: lastName, $options: 'i'}})
+        .exec((err, result) => {
+            if(err) return next(err)
+            if(result) {
+                return res.render('author_form', {title: 'Create Author', errors: [{msg: 'Author already exists'}]})
+            }
+        })
+        let input_data = {
+            firstName,
+            lastName,
+        }
+        if(dateOfBirth != "") input_data.dateOfBirth = dateOfBirth
+        if(dateOfDeath != "") input_data.dateOfDeath = dateOfDeath
+
+        const author = new Author(input_data)
+        author.save((err, result) => {
+            if(err) return next(err)
+            res.redirect(result.url)
+        })
+        
+    }
+]
 
 // del author form GET
 const delAuthor = (req, res) => {
