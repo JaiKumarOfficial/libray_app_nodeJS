@@ -20,6 +20,7 @@ if (!mongoDB.startsWith('mongodb')) {
 
 //connect to db
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true})
+//mongoose.set('debug', true)
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

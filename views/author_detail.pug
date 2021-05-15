@@ -6,7 +6,8 @@ block content
         h2 Author: #{author.name}
         span (#{author.format_dob} - #{author.format_dod})
         br
-        br
+        hr
+        p #[a(href=author.url + '/delete') #[strong Delete Author]]
         div(style='margin-left:20px')
             h4 Books
             each book in books 

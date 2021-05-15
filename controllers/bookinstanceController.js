@@ -1,6 +1,9 @@
 const async = require('async')
 const BookInstance = require('../models/bookinstance')
-
+const Book = require('../models/book')
+const {body, validationResult} = require('express-validator')
+const {validDate} = require('../controllers/handle_data')
+const { Error } = require('mongoose')
 
 
 
@@ -31,14 +34,61 @@ const bookInstanceDetail = (req, res, next) => {
 }
 
 // GET create book instance form
-const createBookInstance = (req, res) => {
-    res.send('CreateBookInstance')
+const createBookInstance = (req, res, next) => {
+    const books = async ()=>{
+        try {
+            let data = await Book.find({}, '_id title').sort({title: 1}).exec()
+            res.render('bookinstance_form', {title: 'Create Book Copy', books: data})
+        }
+        catch(err) {return next(err)}
+    }
+    books()
 }
 
+
 // POST handle create book instance form
-const handleCreateBookInstance = (req, res) => {
-    res.send('handle create book inst')
-}
+const handleCreateBookInstance = [
+    body('book', 'Please select a Book').trim().isLength({min:1}).escape(),
+    body('imprint', 'Imprint is required').trim().isLength({min:1}).escape(),
+    body('date', 'Date is required').trim().custom(date => validDate(date, 'Invalid Date')),
+    body('date').trim().custom(date => {
+        let input_date = new Date(date)
+        if (Number(input_date) < Date.now()) { throw new Error('Invalid Date Available')}
+        return true
+    }),
+    body('status', 'Status is required').custom(status => {
+        let res = ['Available', 'Loaned', 'Maintenance', 'Reserved'].includes(status)
+        if(res) return true;
+        else throw new Error('Invalid status');
+    }).escape(),
+
+    (req, res, next) => {
+        const {book, imprint, date, status} = req.body
+        const errors = validationResult(req)
+        const bookinstance = new BookInstance({
+            book,
+            imprint,
+            date,
+            status
+        })
+        if(!errors.isEmpty()) {
+            const books = async () => {
+                try {
+                    let data = await Book.find({}).sort({title: 1}).exec()
+                    return res.render('bookinstance_form', {title: 'Create Book Copy', books: data, bookinstance: bookinstance, user_date: date, errors: errors.array()})
+                }
+                catch(err) {return next(err)}
+            }
+            books()
+        }
+        else {
+            // bookinstance.save((err, result) => {
+            //     if(err) return next(err)
+            //     return res.redirect(result.url)
+            // })
+        }
+    }
+]
 
 // GET del book instance form
 const delBookInstance = (req, res) => {

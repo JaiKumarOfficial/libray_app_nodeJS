@@ -13,7 +13,8 @@ block content
                 p #[strong Status: ] #[span.text-success #{instance.status}] 
             if instance.status == 'Loaned'
                 p #[strong Status: ] #[span.text-warning #{instance.status}] 
+                p #[strong Due Back: ] #{instance.format_date}
             if instance.status == 'Maintenance'
                 p #[strong Status: ] #[span.text-danger #{instance.status}] 
-            p #[strong Due Back: ] #{instance.format_date} 
+                p #[strong Due Back: ] #{instance.format_date} 
     

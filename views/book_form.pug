@@ -1,0 +1,41 @@
+extends layout 
+
+block content 
+
+    div(style='margin-top:20px;margin-left:20px;margin-bottom:20px')
+        h2 #{title}
+        br
+        form(method='POST', action='')
+            div.form-group
+                label(for='bookName') #[strong Title:] 
+                input(id='bookName', class='form-control', name='title', type='text', placeholder='Book Title', value=(undefined === book ? '' : book.title))
+                label(for='summary') #[Strong Summary:] 
+                input(id='summary', class='form-control', name='summary', type='textarea', placeholder='Book Summary', value=(undefined === book ? '' : book.summary))
+                label(for='author') #[strong Author:] 
+                select(id='author', class='form-control', name='author', placeholder='select author')
+                    each author in authors
+                        if book 
+                            option(value=author.id, selected=(author.id==book.author.toString() ? true : false) ) #{author.name}
+                        else  
+                            option(value=author.id) #{author.name}
+                label(for='isbn') #[strong ISBN:] 
+                input(id='isbn', class='form-control', name='isbn', type='text', placeholder='Ex: 974645983', value=(undefined === book ? '' : book.isbn))
+                div.form-group
+                    label #[strong Genre:]
+                    if genres
+                        div
+                            for genre in genres
+                                div(style='display: inline; padding-right:10px;')
+                                    if book
+                                        input(class='checkbox-input', type='checkbox', name='genre', id=genre._id, value=genre._id, checked=(book.genre.find(elem => {if (elem.toString()==genre._id) return true}) ? true : false))
+                                    else 
+                                        input(class='checkbox-input', type='checkbox', name='genre', id=genre._id, value=genre._id)
+                                    label(for=genre._id) #[strong #{genre.name}]
+                    else
+                        span No genres found, create one to proceed.
+            button.btn.btn-primary(type='submit') Submit
+        br
+        if errors 
+            ul 
+                each error in errors
+                    li #[span.text-danger #{error.msg}]

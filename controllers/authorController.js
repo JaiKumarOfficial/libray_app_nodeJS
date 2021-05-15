@@ -87,15 +87,52 @@ const handleCreateAuthor = [
 ]
 
 // del author form GET
-const delAuthor = (req, res) => {
-    res.send('author del form')
+const delAuthor = (req, res, next) => {
+    async.parallel({
+        author: function(callback) {
+            Author.findById(req.params.id).exec(callback)
+        },
+        author_books: function(callback) {
+            Book.find({author: req.params.id}, 'title summary').exec(callback)
+        }
+    }, 
+    (err, result) => {
+        if(err) return next(err)
+        if (result.author==null) {
+            return res.redirect('/catalog/authors');
+        }
+        res.render('delete_author', {title: 'Delete Author', author: result.author, author_books: result.author_books})
+    })
+    
 }
 
 // handle del author form POST
-const handleDelAuthor = (req, res) => {
-    res.send('del author form post')
-}
-
+const handleDelAuthor = [
+    body('author').trim().escape(), 
+    (req, res, next) => {
+        const author_id = req.body.author
+        async.parallel({
+            author: callback => {
+                Author.findById(author_id).exec(callback)
+            },
+            author_books: callback => {
+                Book.find({author: author_id}).exec(callback)
+            },
+        }, (err, result) => {
+            if(err) return next(err)
+            if (result.author==null) {
+                return res.redirect('/catalog/authors');
+            }
+            if (result.author_books.length > 0) {
+                return res.render('delete_author', {title: 'Delete Author', author: result.author, author_books: result.author_books})
+            }
+            Author.findByIdAndDelete(req.body.author).exec((err, result) => {
+                if(err) return next(err)
+                return res.redirect('/catalog/authors')
+            })
+        })
+    }
+]
 // update author form GET
 const updateAuthor = (req, res) => {
     res.send('update author form get')
