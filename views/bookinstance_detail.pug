@@ -7,6 +7,8 @@ block content
             h4.text-danger This instance does not exist anymore
         else 
             h2 Book Copy ID: #{instance._id} 
+            if err
+                p #[span.text-danger #[strong Can only delete instance with status "Available"]]
             p #[strong Title: ] #{book.title} 
             p #[strong Imprint: ] #{instance.imprint} 
             if instance.status == 'Available'
@@ -17,4 +19,8 @@ block content
             if instance.status == 'Maintenance'
                 p #[strong Status: ] #[span.text-danger #{instance.status}] 
                 p #[strong Due Back: ] #{instance.format_date} 
-    
+            form(method='GET', action=instance.url+ '/update', style='display:inline;margin:5px')
+                button.btn.btn-primary(type=submit) Update Instance
+            form(method='POST', action=instance.url+ '/delete?book=' + book._id, style='display:inline;margin:5px')
+                button.btn.btn-danger(type=submit) Delete Instance
+            // p #[a(href=instance.url + '/delete') #[strong Delete Instance]]

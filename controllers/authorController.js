@@ -7,7 +7,7 @@ const {body, ValidationResult, validationResult} = require('express-validator')
 const authorList = (req, res, next) => {
     Author.find({}).sort([['firstName', 'ascending']]).exec((err, data) => {
         if (err) return next(err)
-        res.render('author_list', {data: data})
+        res.render('author_list', {title: 'All Authors', data: data})
     })
 }
 
@@ -30,7 +30,7 @@ const author = (req, res, next) => {
                 error.status = 404
                 return next(error)
             }
-            res.render('author_detail', {author: result.author, books: result.books})
+            res.render('author_detail', {title: 'Author', author: result.author, books: result.books})
         }
     )
 }

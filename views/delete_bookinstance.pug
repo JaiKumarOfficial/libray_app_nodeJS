@@ -1,0 +1,10 @@
+extends layout 
+block content 
+    div(style='margin-top:20px;margin-left:20px')
+        h2 Book Copy ID: #{instance._id}
+        if instance.status == 'Available'
+            form(method='POST', action='')
+                input(id='instance_id', name='id', type='hidden', class='form-control', value=instance._id)
+                button.btn.btn-danger(type='submit') Delete Instance
+        else 
+            p some error occured ! 

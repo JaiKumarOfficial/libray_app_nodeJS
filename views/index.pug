@@ -1,18 +1,19 @@
 extends layout
 
 block content
-  div(style='margin: auto; text-align: center')
+  div(style='margin-top:35px; margin-left:20px; text-align: center')
     h1= title
-  h4 Welcome to #{title} home page
+  div(style='margin-top:35px; margin-left:20px;')
+    h4 Welcome to #{title} home page
 
-  if error
-    p Error getting dynamic content.
-  else
-    p The library has the following record counts:
+    if error
+      p Error getting dynamic content.
+    else
+      p The library has the following record counts:
 
-    ul
-      li #[strong Books:] !{data.book_count}
-      li #[strong Copies:] !{data.book_instance_count}
-      li #[strong Copies available:] !{data.book_instance_available_count}
-      li #[strong Authors:] !{data.author_count}
-      li #[strong Genres:] !{data.genre_count}
+      ul
+        li #[strong Books:] !{data.book_count}
+        li #[strong Copies:] !{data.book_instance_count}
+        li #[strong Copies available:] !{data.book_instance_available_count}
+        li #[strong Authors:] !{data.author_count}
+        li #[strong Genres:] !{data.genre_count}

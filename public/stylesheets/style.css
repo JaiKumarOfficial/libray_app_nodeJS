@@ -3,3 +3,18 @@
   padding: 0;
   list-style: none;
 }
+
+div.bg {
+  /* The image used */
+  background-image: url("../images/klipartz.com.png");
+}
+
+.vl {
+  border-left: 3px solid lightgray;
+  height: 97%;
+  position: absolute;
+  left: 17%;
+  margin-left: -3px;
+  top: 0;
+  margin-top: 10px;
+}

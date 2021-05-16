@@ -7,13 +7,14 @@ const { body, validationResult } = require('express-validator')
 const genreList = (req, res, next) => {
     Genre.find({}).sort('name').exec((err, data) => {
         if (err) return next(err);
-        res.render('genre_list', {data: data})
+        res.render('genre_list', {title: 'All Genres', data: data})
     })
 }
 
 // Display detail page for a specific Genre.
 const genreDetail = (req, res, next) => {
     let genreId = req.params.id
+    const queryError = req.query.books
     async.parallel({
         genre: function(callback) {
             Genre.findById({_id: genreId}).exec(callback)
@@ -34,7 +35,7 @@ const genreDetail = (req, res, next) => {
             err.status = 404
             return next(err)
         }
-        res.render('genre_detail', {genre: result.genre, books: result.books})
+        res.render('genre_detail', {title: 'Genre', genre: result.genre, books: result.books, queryError})
     })
 }
 
@@ -68,13 +69,18 @@ const handleCreateGenre = [
                 ]
                 return res.render('genre_form', {title: 'Create Genre', errors: errors})
             }
-            const genre = new Genre({name: req.body.name})
-            genre.save((err, result) => {
-                if (err) return next(err)
-                res.redirect(result.url, 201)
-            })
         })
-        
+        const genre = new Genre({name: req.body.name})
+        const saveGenre = async () => {
+            try {
+                let result = await genre.save()
+                res.redirect(result.url)
+            }
+            catch(err) {
+                if (err) return next(err)
+            }
+        }
+        saveGenre();
     }
 ]
 
@@ -84,8 +90,25 @@ const delGenre = (req, res) => {
 }
 
 // Handle Genre delete on POST.
-const handleDelGenre = (req, res) => {
-    res.send('handle del genre')
+const handleDelGenre = (req, res, next) => {
+    const id = req.params.id
+    
+    Book.findOne({genre: id}).exec((err, result) => {
+        if(err) return next(err)
+        if (result != null) {
+            return res.redirect('/catalog/genre/' + id + '?books=true')
+        }
+        (async () => {
+            try {
+                let result = await Genre.findByIdAndDelete(id).exec()
+                res.redirect('/catalog/genres')
+            }
+            catch(err){
+                return next(err)
+            }
+        })();
+    })
+    //res.send('handle del genre')
 }
 
 // Display Genre update form on GET.

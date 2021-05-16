@@ -12,14 +12,13 @@ const bookInstanceList = (req, res, next) => {
     
     BookInstance.find({}).populate('book').exec((err, data) => {
         if (err) return next(err);
-        res.render('bookinstance_list', {data: data})
+        res.render('bookinstance_list', {data: data, title: 'All Book Instances'})
     })
 }
 
 // GET specific book instance detail
 const bookInstanceDetail = (req, res, next) => {
     const id = req.params.id
-
     async.parallel({
         instance: function(callback) {
             BookInstance.findById(id).populate('book').exec(callback)
@@ -29,7 +28,9 @@ const bookInstanceDetail = (req, res, next) => {
         // if (result.instance == null) {
         //     return res.render('bookinstance_detail', {instance: null})
         // }
-        res.render('bookinstance_detail', { instance: result.instance, book: result.instance.book })
+        if (!req.query.error)
+            res.render('bookinstance_detail', { title: 'Book Instance', instance: result.instance, book: result.instance.book })
+        else { res.render('bookinstance_detail', { title: 'Book Instance', instance: result.instance, book: result.instance.book, err: true })}
     })
 }
 
@@ -82,33 +83,100 @@ const handleCreateBookInstance = [
             books()
         }
         else {
-            // bookinstance.save((err, result) => {
-            //     if(err) return next(err)
-            //     return res.redirect(result.url)
-            // })
+            bookinstance.save((err, result) => {
+                if(err) return next(err)
+                return res.redirect(result.url)
+            })
         }
     }
 ]
 
-// GET del book instance form
-const delBookInstance = (req, res) => {
-    res.send('del book isnt')
+// GET del book instance form *** - REFRACTED CODE, NO NEED FOR GET DELETE
+const delBookInstance = (req, res, next) => {
+    // BookInstance.findById(req.params.id).populate('book').exec((err, result) => {
+    //     if(err) return next(err)
+    //     if (result == null) return res.json({success: true, msg: 'Instance not found'})
+    //     if (result.status != 'Available') {
+    //         return res.redirect('/catalog/bookinstance/' + result._id + '?error=true')
+    //     }
+    //     res.render('delete_bookinstance', {title: 'Delete Book Instance', instance: result})
+    // })
 }
 
 // POST handle del book instance form
-const handleDelBookInstance = (req, res) => {
-    res.send('handle del book isnt')
+const handleDelBookInstance = (req, res, next) => {
+    BookInstance.findById(req.params.id).populate('book').exec((err, result) => {
+        if(err) return next(err)
+        if (result == null) return res.json({success: true, msg: 'Instance not found'})
+        if (result.status != 'Available') {
+            return res.redirect('/catalog/bookinstance/' + result._id + '?error=true')
+        }
+        (async () => {
+            try {
+                let result = await BookInstance.findByIdAndDelete(req.params.id).exec()
+                res.redirect('/catalog/book/'+req.query.book)
+            }
+            catch(err){
+                return next(err)
+            }
+        })();
+    })
 }
 
 // GET update book instance form
 const updateBookInstance = (req, res) => {
-    res.send('update book isnt')
+    res.render('update_bookinstance', {title: 'Update Book Instance',})
 }
 
 // POST handle update book instance form
-const handleUpdateBookInstance = (req, res) => {
-    res.send('handle update book isnt')
-}
+const handleUpdateBookInstance = [
+    // status must be correct value if selected
+    body('status').trim().custom(status => {
+        let res = ['Available', 'Loaned', 'Maintenance', 'Reserved'].includes(status)
+        if(res) return true;
+        else throw new Error('Invalid status');
+    }).optional({checkFalsy: true}).escape(),
+
+    // validate date if present
+    body('due_back').trim().custom(date => validDate(date, 'Invalid Date')).optional({checkFalsy: true}),
+
+    // date should be > current date if present
+    body('due_back').trim().custom(date => {
+        let input_date = new Date(date)
+        if (Number(input_date) < Date.now()) { throw new Error('Invalid Date')}
+        return true
+    }).optional({checkFalsy: true}),
+
+    // if status is maintenance or loaned or reserved then date must not be empty
+    body('due_back', 'Date is required').if(body('status').custom(status=>{
+        let res = ['Loaned', 'Maintenance', 'Reserved'].includes(status)
+        if(res) return true 
+        else false
+    })).notEmpty(),
+
+    // there should be atleast one input
+    body('due_back').if(body('status').isEmpty()).notEmpty().withMessage('Please provide at least one input'),
+
+    (req, res, next) => {
+        const id = req.params.id
+        const errors = validationResult(req)
+        const {status, due_back} = req.body
+
+        if(!errors.isEmpty()) {
+            let instance = {status, due_back}
+            return res.render('update_bookinstance', {title: 'Update Book Instance', errors: errors.array(), instance: instance})
+        }
+        const update = {}
+        let obj = {status, due_back}
+        for (key in obj) {
+            if(obj[key]) update[key] = obj[key]
+        }
+        BookInstance.findByIdAndUpdate(id, update).exec((err, result) => {
+            if(err) return next(err)
+            res.redirect(result.url)
+        })
+    }
+]
 
 module.exports = {
     bookInstanceList,

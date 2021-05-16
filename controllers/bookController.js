@@ -38,7 +38,7 @@ exports.book_list = function(req, res, next) {
     let bookList = async () =>{
         try {
             let data = await Book.find({}).populate('author').select('title author').exec()
-            res.render('book_list', {data: data})
+            res.render('book_list', {title: 'All Books', data: data})
         }
         catch(err) {
             next(err)
@@ -48,9 +48,8 @@ exports.book_list = function(req, res, next) {
 };
 
 // Display detail page for a specific book.
-exports.book_detail = function(req, res) {
+exports.book_detail = function(req, res, next) {
     let id = req.params.id;
-
     async.parallel({
         book: function(callback) {
             Book.findById(id).populate('author genre').exec(callback)
@@ -65,8 +64,7 @@ exports.book_detail = function(req, res) {
                 let error = new Error('no book found')
                 return next(error)
             }
-            console.log(result.book.genre)
-            res.render('book_detail', {book: result.book, instances: result.instances})
+            res.render('book_detail', {title: 'Book', book: result.book, instances: result.instances, copies: req.query.copies})
         }
     )
 };
@@ -154,8 +152,18 @@ exports.book_delete_get = function(req, res) {
 };
 
 // Handle book delete on POST.
-exports.book_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book delete POST');
+exports.book_delete_post = function(req, res, next) {
+    const id = req.params.id
+    BookInstance.findOne({book: id}).exec((err, result) => {
+        if(err) return next(err);
+        if(result != null) {
+            return res.redirect('/catalog/book/'+id+'?copies=true')
+        }
+        Book.findByIdAndDelete(id).exec(err => {
+            if(err) return next(err)
+            res.redirect('/catalog/books')
+        })
+    })
 };
 
 // Display book update form on GET.

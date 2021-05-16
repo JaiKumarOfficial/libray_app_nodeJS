@@ -37,8 +37,16 @@
 
 // console.log('not blocking code')
 
-function toLetterCase(string) {
-  return string.split(" ").map(word => {return word[0].toUpperCase() + word.slice(1)}).join(" ")
-}
+// function toLetterCase(string) {
+//   return string.split(" ").map(word => {return word[0].toUpperCase() + word.slice(1)}).join(" ")
+// }
 
-console.log(toLetterCase("this is a test"))
+// console.log(toLetterCase("this is a test"))
+let o = {a: 1,b:2, c:''}
+let r = {}
+for (let key in o) {
+  if(o[key]) r[key] = o[key]
+}
+console.log(r)
+const obj = {a,c} = o
+console.log(obj)

@@ -12,17 +12,22 @@ block content
                 a(href= genre.url) #{genre.name}, 
             else 
                 span.text-warning Unavailable 
-        br
+        form(method='POST', action=book.url+'/delete')
+            button.btn.btn-danger(type='submit', style='margin-bottom:20px; padding:3px; font-size:13px;') Delete Book
+        
+        if copies
+            p #[span.text-danger #[strong Delete the following copy(s) before attempting to delete this book.]]
+        
         div(style='margin-left:30px')
             h3 Copies
-            br
+            hr
             each instance in instances
                 if instance.status == 'Available'
-                    p #[span.text-success #{instance.status}]
+                    p #[strong Status: #[span.text-success #{instance.status}]]
                 if instance.status == 'Maintenance'
-                    p #[span.text-danger #{instance.status}]
+                    p #[strong Status: #[span.text-danger #{instance.status}]]
                 if instance.status == 'Loaned'
-                    p #[span.text-warning #{instance.status}]
+                    p #[strong Status: #[span.text-warning #{instance.status}]]
                 p #[strong Imprint:] #{instance.imprint}
                 p #[strong Id:] #[a(href=instance.url) #{instance._id}]
                 if instance.status != 'Available'

@@ -3,11 +3,15 @@ extends layout
 block content
 
   h1 Genre: #{genre.name}
-
+  form(method='POST', action=genre.url + '/delete')
+    button.btn.btn-danger(type='submit', style='margin-left:20px;margin-top:5px;font-size:13px;padding:3px;') Delete Genre
+  if queryError 
+    div(style='margin-top:10px;margin-left:20px')
+      p #[span.text-danger #[strong Delete the following books before attempting to delete this genre.]]
   div(style='margin-left:20px;margin-top:20px')
 
     h4 Books
-
+    hr
     dl
       each book in books
         dt
