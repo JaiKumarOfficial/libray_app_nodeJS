@@ -8,15 +8,18 @@ block content
         p #[strong Summary:] #{book.summary} 
         p #[strong ISBN:] #{book.isbn} 
         p #[strong Genre:] 
-            each genre in book.genre
-                a(href= genre.url) #{genre.name}, 
+            if book.genre[0] != null
+                each genre in book.genre
+                    a(href= genre.url) #{genre.name}, 
             else 
                 span.text-warning Unavailable 
-        form(method='POST', action=book.url+'/delete')
+        form(method='POST', action=book.url+'/delete', style='display:inline;')
             button.btn.btn-danger(type='submit', style='margin-bottom:20px; padding:3px; font-size:13px;') Delete Book
-        
+        form(method='GET', action=book.url+'/update', style='margin-left:10px; display:inline;')
+            button.btn.btn-primary(type='submit', style='margin-bottom:20px; padding:3px; font-size:13px;') Update Book
         if copies
             p #[span.text-danger #[strong Delete the following copy(s) before attempting to delete this book.]]
+        hr
         
         div(style='margin-left:30px')
             h3 Copies

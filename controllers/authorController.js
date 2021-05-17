@@ -134,15 +134,43 @@ const handleDelAuthor = [
     }
 ]
 // update author form GET
-const updateAuthor = (req, res) => {
-    res.send('update author form get')
+const updateAuthor = (req, res, next) => {
+    Author.findById(req.params.id).exec((err,result) => {
+        if(err) return next(err)
+        if(result==null) return res.json({success:true, msg:'Author not found'})
+        res.render('update_author', {title: 'Update Author', author:result})
+    })
 }
 
 // handle POST update author form
-const handleUpdateAuthor = (req, res) => {
-    res.send('update author form post')
-}
+const handleUpdateAuthor = [
+    body('firstName', 'First Name is required').trim().isLength({min:1}).escape(),
+    body('lastName', 'Last Name is required').trim().isLength({min:1}).escape(),
+    body('dateOfBirth').trim().custom(date => {
+        if(isNaN(Date.parse(date))) {
+            throw new Error('Invalid Date of Birth')
+        }
+        return true;
+    }).optional({checkFalsy: true}),
+    body('dateOfDeath').trim().custom(date => {
+        if(isNaN(Date.parse(date))) {
+            throw new Error('Invalid Date of Death')
+        }
+        return true;
+    }).optional({checkFalsy: true}),
 
+    (req, res, next) => {
+        const errors = validationResult(req)
+        const author = {...req.body}
+        if(!errors.isEmpty()) {
+            return res.render('update_author', {title: 'Update Author', author, errors: errors.array()})
+        }
+        Author.findByIdAndUpdate(req.params.id, author).exec((err, result) => {
+            if(err) return next(err)
+            res.redirect(result.url)
+        })
+    }
+]
 module.exports = {
     authorList,
     author,

@@ -124,8 +124,12 @@ const handleDelBookInstance = (req, res, next) => {
 }
 
 // GET update book instance form
-const updateBookInstance = (req, res) => {
-    res.render('update_bookinstance', {title: 'Update Book Instance',})
+const updateBookInstance = (req, res, next) => {
+    BookInstance.findById(req.params.id).exec((err, result) => {
+        if(err) return next(err)
+        if(result==null) return res.json({success:true, msg: 'Book instance not found'})
+        res.render('update_bookinstance', {title: 'Update Book Instance', instance: result})
+    })
 }
 
 // POST handle update book instance form

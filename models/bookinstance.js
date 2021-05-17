@@ -28,5 +28,9 @@ BookInstanceSchema
   return new_date;
 });
 
+BookInstanceSchema.virtual('format_date_mmddyyyy').get(function() {
+  return handle_data.formatDate_mmddyyyy(this.due_back)
+})
+
 //Export model
 module.exports = mongoose.model('BookInstance', BookInstanceSchema);

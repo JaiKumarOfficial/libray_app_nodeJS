@@ -3,7 +3,9 @@ const Author = require('../models/author')
 const Genre = require('../models/genre')
 const BookInstance = require('../models/bookinstance')
 const async = require('async');
-const {body, validationResult} = require('express-validator')
+const {body, validationResult} = require('express-validator');
+const { Error } = require('mongoose');
+const book = require('../models/book');
 
 
 exports.index = function(req, res) {
@@ -167,11 +169,82 @@ exports.book_delete_post = function(req, res, next) {
 };
 
 // Display book update form on GET.
-exports.book_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book update GET');
+exports.book_update_get = function(req, res, next) {
+    const id = req.params.id
+    async.parallel({
+        book: function(callback) {
+            Book.findById(id).populate('author genre').exec(callback)
+        },
+        genres: function(callback) {
+            Genre.find().sort({name: 1}).exec(callback)
+        },
+        authors: function(callback) {
+            Author.find().sort({lastName: 1}).exec(callback)
+        }
+    }, (err, result) => {
+        if(err) return next(err)
+        if(result.book == null) return res.json({success: true, msg: 'Book not found'})
+        res.render('update_book', {title: 'Update Book', book: result.book, authors: result.authors, genres: result.genres})
+    })
 };
 
 // Handle book update on POST.
-exports.book_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book update POST');
-};
+exports.book_update_post = [
+    body('title', 'Title is Required').trim().isLength({min: 1}).escape(),
+    body('summary', 'Summary is Required').trim().isLength({min: 1}).escape(),
+    body('author', 'Author is Required').trim().isLength({min: 1}).escape(),
+    body('isbn', 'ISBN is Required').trim().isLength({min: 1}).escape(),
+    body('isbn').if(body('isbn').notEmpty()).isNumeric().withMessage('ISBN is numeric only'),
+    
+    // check ISBN conflict in db 
+    body('genre.*', 'Genre is Required').trim().isLength({min: 1}).escape(),
+    
+    function(req, res, next) {
+        const isbn = req.body.isbn
+        const errors = validationResult(req)
+        const update_book = {...req.body}
+        if(!Array.isArray(update_book.genre)) {
+            update_book.genre = new Array(update_book.genre)
+        }
+        async function handleValidation() {
+            
+            try {
+                let book_isbn = await Book.findById(req.params.id).select('isbn').exec()
+                if (book_isbn.isbn != isbn) {
+                    let result = await Book.findOne({isbn : isbn}).exec()
+                    if(result != null) {
+                        errors.errors.push({
+                            value: isbn,
+                            msg: 'ISBN already exists',
+                            param: 'isbn',
+                            location: 'body'
+                        })
+                    }
+                }
+            }
+            catch(err){
+                if(err) return next(err)
+            }
+            if(!errors.isEmpty()){
+                async.parallel({
+                    genres: function(callback) {
+                        Genre.find().sort({name: 1}).exec(callback)
+                    },
+                    authors: function(callback) {
+                        Author.find().sort({lastName: 1}).exec(callback)
+                    }
+                }, (err, result) => {
+                    if(err) return next(err)
+                    return res.render('update_book', {title: 'Update Book', book: update_book, authors: result.authors, genres: result.genres, errors: errors.array()})
+                })
+            } 
+            else {
+                Book.findByIdAndUpdate(req.params.id, update_book).exec((err, result) => {
+                    if(err) return next(err)
+                    res.redirect(result.url)
+                })
+            }  
+        }
+        handleValidation()
+    }
+]

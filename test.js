@@ -42,11 +42,14 @@
 // }
 
 // console.log(toLetterCase("this is a test"))
-let o = {a: 1,b:2, c:''}
-let r = {}
-for (let key in o) {
-  if(o[key]) r[key] = o[key]
-}
-console.log(r)
-const obj = {a,c} = o
-console.log(obj)
+// let o = {a: 1,b:2, c:''}
+// let r = {}
+// for (let key in o) {
+//   if(o[key]) r[key] = o[key]
+// }
+// console.log(r)
+// const obj = {a,c} = o
+// console.log(obj)
+
+let date = new Date('01/02/1920')
+console.log(`${date.getMonth()<10 ? '0'+String(date.getMonth()+1) : date.getMonth()+1}/${date.getDate()<10 ? '0'+date.getDate() : date.getDate()}/${date.getFullYear()}`)

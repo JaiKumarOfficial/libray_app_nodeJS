@@ -27,4 +27,12 @@ authorSchema.virtual('format_dod').get(function() {
     return handle_data.formatDate(this.dateOfDeath)
 })
 
+authorSchema.virtual('format_dob_mmddyyyy').get(function() {
+    return handle_data.formatDate_mmddyyyy(this.dateOfBirth)
+})
+
+authorSchema.virtual('format_dod_mmddyyyy').get(function() {
+    return handle_data.formatDate_mmddyyyy(this.dateOfDeath)
+})
+
 module.exports = mongoose.model('Author', authorSchema)

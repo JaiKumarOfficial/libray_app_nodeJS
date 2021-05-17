@@ -1,6 +1,6 @@
 // format date
 function formatDate(dateobj) {
-    if(dateobj === undefined) return ""
+    if(dateobj === undefined || dateobj === null) return ""
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     let month = dateobj.getMonth()
     let date = dateobj.getDate()
@@ -9,12 +9,12 @@ function formatDate(dateobj) {
 }
 
 function formatDate_mmddyyyy(dateobj) {
-    if(dateobj === undefined) return ""
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    let month = dateobj.getMonth()
-    let date = dateobj.getDate()
+    if(dateobj === undefined || dateobj === null) return ""
+
+    let month = dateobj.getMonth()<10 ? '0'+String(dateobj.getMonth()+1) : dateobj.getMonth()+1
+    let date = dateobj.getDate()<10 ? '0'+dateobj.getDate() : dateobj.getDate()
     let year = dateobj.getFullYear()
-    return `${months[month]} ${date}th, ${year}`
+    return `${month}/${date}/${year}`
 }
 
 // validate date
@@ -32,4 +32,5 @@ function toLetterCase(string) {
 module.exports = {
     formatDate,
     validDate,
+    formatDate_mmddyyyy,
 }
