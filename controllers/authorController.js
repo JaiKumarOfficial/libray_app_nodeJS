@@ -37,7 +37,7 @@ const author = (req, res, next) => {
 
 //display author create form
 const createAuthor = (req, res, next) => {
-    res.render('author_form', {title: 'Author Form'})
+    res.render('author_form', {title: 'Create Author'})
 }
 
 //handle author create POST

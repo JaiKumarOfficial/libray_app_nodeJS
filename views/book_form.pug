@@ -22,8 +22,8 @@ block content
                 input(id='isbn', class='form-control', name='isbn', type='text', placeholder='Ex: 974645983', value=(undefined === book ? '' : book.isbn))
                 div.form-group
                     label #[strong Genre:]
-                    if genres
-                        div
+                    div
+                        if genres
                             for genre in genres
                                 div(style='display: inline; padding-right:10px;')
                                     if book
@@ -31,8 +31,10 @@ block content
                                     else 
                                         input(class='checkbox-input', type='checkbox', name='genre', id=genre._id, value=genre._id)
                                     label(for=genre._id) #[strong #{genre.name}]
-                    else
-                        span No genres found, create one to proceed.
+                        else
+                            span No genres found, create one to proceed.
+                            
+                        a(href='/catalog/genre/create', class='addGenre' title='Add new Genre' style='color:#28a745;') #[strong +] Genre
             button.btn.btn-primary(type='submit') Submit
         br
         if errors 

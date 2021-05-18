@@ -87,9 +87,9 @@ exports.book_create_get = function(req, res, next) {
             next(error)
         }
         if (result.genres == null) {
-            return res.render('book_form', {title: 'Creat Book', authors: result.authors})
+            return res.render('book_form', {title: 'Create Book', authors: result.authors})
         }
-        res.render('book_form', {title: 'Creat Book', authors: result.authors, genres: result.genres});
+        res.render('book_form', {title: 'Create Book', authors: result.authors, genres: result.genres});
     })
 };
 
@@ -98,11 +98,20 @@ exports.book_create_post = [
     body('title', 'Title is required').trim().isLength({min: 1}).escape(),
     body('summary', 'Summary is required').trim().isLength({min: 1}).escape(),
     body('author', 'Author is required').trim().isLength({min: 1}).escape(),
-    body('isbn', 'ISBN is required').trim().isNumeric().withMessage('ISBN is numeric only').isLength({min: 1}).escape(),
+    body('isbn', 'ISBN is required').trim().isLength({min: 1}).escape(),
+    body('isbn').if(body('isbn').notEmpty()).isNumeric().withMessage('ISBN is numeric only'),
     body('genre.*').escape(),
+    body('genre', 'Genre is required').exists(),
+    body('isbn').custom(isbn => {
+        return Book.findOne({isbn: isbn}).then(res => {
+            if(res != null) {
+                return Promise.reject('ISBN already exists')
+            }
+        })
+    }),
 
     function(req, res, next) {
-        console.log(req.body)
+        if(req.db_error) return next(req.db_error)
         const errors = validationResult(req)
         let {title, summary, author, isbn, genre} = req.body
         const book = new Book({
@@ -112,7 +121,7 @@ exports.book_create_post = [
             isbn,
             genre,
         })
-        console.log(book)
+        console.log(errors.errors)
         if(!errors.isEmpty()) {
             return async.parallel({
                 genres: function(callback) {
@@ -128,10 +137,10 @@ exports.book_create_post = [
                     next(error)
                 }
                 if (result.genres == null) {
-                    return res.render('book_form', {title: 'Creat Book', authors: result.authors, book: book, errors: errors.array()})
+                    return res.render('book_form', {title: 'Create Book', authors: result.authors, book: book, errors: errors.array()})
                 }
 
-                return res.render('book_form', {title: 'Creat Book', authors: result.authors, genres: result.genres, book: book, errors: errors.array()});
+                return res.render('book_form', {title: 'Create Book', authors: result.authors, genres: result.genres, book: book, errors: errors.array()});
             })
         }
         Book.findOne({isbn: isbn}).exec((err, result) => {
@@ -195,7 +204,7 @@ exports.book_update_post = [
     body('author', 'Author is Required').trim().isLength({min: 1}).escape(),
     body('isbn', 'ISBN is Required').trim().isLength({min: 1}).escape(),
     body('isbn').if(body('isbn').notEmpty()).isNumeric().withMessage('ISBN is numeric only'),
-    
+    body('genre', 'Genre is required').exists(),
     // check ISBN conflict in db 
     body('genre.*', 'Genre is Required').trim().isLength({min: 1}).escape(),
     

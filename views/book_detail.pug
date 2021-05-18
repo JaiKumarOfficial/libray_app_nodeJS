@@ -10,7 +10,9 @@ block content
         p #[strong Genre:] 
             if book.genre[0] != null
                 each genre in book.genre
-                    a(href= genre.url) #{genre.name}, 
+                    if genre == book.genre[0]
+                        a(href= genre.url) #{genre.name}   
+                    a(href= genre.url) , #{genre.name} 
             else 
                 span.text-warning Unavailable 
         form(method='POST', action=book.url+'/delete', style='display:inline;')

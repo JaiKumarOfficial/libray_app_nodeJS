@@ -18,3 +18,18 @@ div.bg {
   top: 0;
   margin-top: 10px;
 }
+.addGenre {
+  padding: 0px 3px 1px 2px;
+}
+.addGenre:hover {
+  text-decoration: none;
+  border-radius: 0.3rem;
+  border: 1.5px solid #28a745;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 767px) {
+  .vl {
+    display: none !important;
+  }
+}

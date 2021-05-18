@@ -1,14 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const loginController = require('../controllers/loginController')
+const userController = require('../controllers/userController')
+
+
 
 /* GET users listing. */
-router.get('/login', function(req, res, next) {
-  res.send('login page');
-});
+router.get('/login', userController.get_login_form)
 
-router.get('/signup', (req, res) => {
-  res.send('signup page')
-})
+router.post('/login', userController.post_login_form)
+
+router.get('/register', userController.get_register_form)
+
+router.post('/register', userController.post_register_form)
 
 module.exports = router;
