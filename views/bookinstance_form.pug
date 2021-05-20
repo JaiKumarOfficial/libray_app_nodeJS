@@ -8,7 +8,7 @@ block content
             form(method='POST', action='')
                 div.form-group
                     label(for='book') #[strong Book:] 
-                    select(id='book', class='form-control', name='book')
+                    select(id='book', class='form-control css', name='book')
                         each book in books
                             if bookinstance 
                                 option(value=book._id, selected=(book._id == bookinstance.book.toString() ? true : false)) #{book.title}
@@ -16,13 +16,13 @@ block content
                                 option(value=book._id, selected=false) #{book.title}                
                 div.form-group
                     label(for='imprint') #[strong Imprint:] 
-                    input#imprint.form-control(type='text', name='imprint', placeholder='Publisher and date information', value=(undefined === bookinstance ? '' : bookinstance.imprint))
+                    input#imprint.form-control.css(type='text', name='imprint', placeholder='Publisher and date information', value=(undefined === bookinstance ? '' : bookinstance.imprint))
                 div.form-group
                     label(for='date') #[strong Date when book available:] 
-                    input#date.form-control(type=text, name='date', placeholder='mm/dd/yyyy', value=(undefined === user_date ? '' : user_date)) 
+                    input#date.form-control.css(type=text, name='date', placeholder='mm/dd/yyyy', value=(undefined === user_date ? '' : user_date)) 
                 div.form-group
                     label(for="status") #[strong Status:] 
-                    select(id='status', class='form-control', name='status')
+                    select(id='status', class='form-control css', name='status')
                         each status in ['Available', 'Loaned', 'Maintenance', 'Reserved']
                             if bookinstance
                                 option(value=status, selected=(status === bookinstance.status ? true : false)) #{status}

@@ -8,13 +8,13 @@ block content
         form(method='POST', action='')
             div.form-group
                 label(for="fname") #[strong First Name]
-                input(id='fname', name='firstName', class='form-control', type='input', placeholder='Ex: John', value=(author.firstName?author.firstName:""))
+                input(id='fname', name='firstName', class='form-control css', type='input', placeholder='Ex: John', value=(author.firstName?author.firstName:""))
                 label(for="lname") #[strong Last Name]
-                input(id='lname', name='lastName', class='form-control', type='input', placeholder='Ex: Watson', value=(author.lastName?author.lastName:""))
+                input(id='lname', name='lastName', class='form-control css', type='input', placeholder='Ex: Watson', value=(author.lastName?author.lastName:""))
                 label(for="dob") #[strong Date of Birth] #[span(style='opacity: 80%;font-size: 14px;') (mm/dd/yyyy)]
-                input(id='dob', name='dateOfBirth', class='form-control', type='input', placeholder='mm/dd/yyyy', value=(author.format_dob_mmddyyyy?author.format_dob_mmddyyyy:author.dateOfBirth?author.dateOfBirth:""))
+                input(id='dob', name='dateOfBirth', class='form-control css', type='input', placeholder='mm/dd/yyyy', value=(author.format_dob_mmddyyyy?author.format_dob_mmddyyyy:author.dateOfBirth?author.dateOfBirth:""))
                 label(for="dod") #[strong Date of Death] #[span(style='opacity: 80%;font-size: 14px;') (mm/dd/yyyy)]
-                input(id='dod', name='dateOfDeath', class='form-control', type='input', placeholder='mm/dd/yyyy', value=(author.format_dod_mmddyyyy?author.format_dod_mmddyyyy:author.dateOfDeath?author.dateOfDeath:""))
+                input(id='dod', name='dateOfDeath', class='form-control css', type='input', placeholder='mm/dd/yyyy', value=(author.format_dod_mmddyyyy?author.format_dod_mmddyyyy:author.dateOfDeath?author.dateOfDeath:""))
             button.btn.btn-primary(type='submit') Update
 
         if errors 

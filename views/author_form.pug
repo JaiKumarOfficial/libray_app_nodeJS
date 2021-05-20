@@ -8,13 +8,13 @@ block content
         form(method='POST', action='')
             div.form-group
                 label(for="fname") #[strong First Name]
-                input(id='fname', name='firstName', class='form-control', type='input', placeholder='Ex: John', value="")
+                input(id='fname', name='firstName', class='form-control css', type='input', placeholder='Ex: John', value="")
                 label(for="lname") #[strong Last Name]
-                input(id='lname', name='lastName', class='form-control', type='input', placeholder='Ex: Watson', value="")
+                input(id='lname', name='lastName', class='form-control css', type='input', placeholder='Ex: Watson', value="")
                 label(for="dob") #[strong Date of Birth]
-                input(id='dob', name='dateOfBirth', class='form-control', type='input', placeholder='mm/dd/yyyy', value="")
+                input(id='dob', name='dateOfBirth', class='form-control css', type='input', placeholder='mm/dd/yyyy', value="")
                 label(for="dod") #[strong Date of Death]
-                input(id='dod', name='dateOfDeath', class='form-control', type='input', placeholder='mm/dd/yyyy', value="")
+                input(id='dod', name='dateOfDeath', class='form-control css', type='input', placeholder='mm/dd/yyyy', value="")
             button.btn.btn-primary(type='submit') Submit
 
         if errors 

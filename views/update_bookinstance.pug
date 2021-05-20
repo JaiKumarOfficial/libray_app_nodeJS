@@ -6,7 +6,7 @@ block content
 
         form.form-group(method='POST', action='')
             label(for='status') #[strong Status:]
-            select#status.form-control(name='status')
+            select#status.form-control.css(name='status')
                 option(value='') Select Status
                 each status in ['Available', 'Loaned', 'Maintenance', 'Reserved']
                     if instance
@@ -14,7 +14,7 @@ block content
                     else 
                         option(value=status) #{status}
             label(for='due_back') #[strong Due Back:]
-            input#due_back.form-control(type='text', name='due_back', placeholder='mm/dd/yyyy', value=(instance.format_date_mmddyyyy?instance.format_date_mmddyyyy:instance.due_back?instance.due_back:""))
+            input#due_back.form-control.css(type='text', name='due_back', placeholder='mm/dd/yyyy', value=(instance.format_date_mmddyyyy?instance.format_date_mmddyyyy:instance.due_back?instance.due_back:""))
             button.btn.btn-primary(type='submit', style='margin-top:10px;') Update
 
         if errors 

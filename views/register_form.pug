@@ -8,19 +8,19 @@ block content
         form(method='POST', action='')
             div.form-group
                 label(for="fname") #[strong First Name]
-                input(id='fname', name='firstName', class='form-control', type='input', placeholder='Ex: John', value="")
+                input(id='fname', name='firstName', class='form-control css', type='input', placeholder='Ex: John', value=(input ? input.firstName : ''))
                 label(for="lname") #[strong Last Name]
-                input(id='lname', name='lastName', class='form-control', type='input', placeholder='Ex: Watson', value="")
+                input(id='lname', name='lastName', class='form-control css', type='input', placeholder='Ex: Watson', value=(input ? input.lastName : ''))
                 label(for="dob") #[strong Date of Birth]
-                input(id='dob', name='dateOfBirth', class='form-control', type='input', placeholder='mm/dd/yyyy', value="")
+                input(id='dob', name='dateOfBirth', class='form-control css', type='input', placeholder='mm/dd/yyyy', value=(input ? input.dateOfBirth : ''))
                 label(for="contact") #[strong Phone]
-                input(id='contact', name='contact', class='form-control', type='input', placeholder='10 digit contact number', value="")
+                input(id='contact', name='contact', class='form-control css', type='input', placeholder='10 digit contact number', value=(input ? input.contact : ''))
                 label(for="email") #[strong Email]
-                input(id='eamil', name='email', class='form-control', type='input', placeholder='xyz@abc.com', value="")
+                input(id='eamil', name='email', class='form-control css', type='input', placeholder='xyz@abc.com', value=(input ? input.email : ''))
                 label(for="password") #[strong Password]
-                input(id='password', name='password', class='form-control', type='input', placeholder='password', value="")
+                input(id='password', name='password', class='form-control css', type='password', placeholder='password', value=(input ? input.password : ''))
                 label(for="confirm_password") #[strong Confirm Password]
-                input(id='confirm_password', name='confirm_password', class='form-control', type='input', placeholder='confirm password', value="")
+                input(id='confirm_password', name='confirm_password', class='form-control css', type='password', placeholder='confirm password', value=(input ? input.confirm_password : ''))
             button.btn.btn-primary(type='submit') Submit
 
         if errors 
